@@ -28,9 +28,94 @@
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         .profile-glow { box-shadow: 0 0 30px rgba(56, 189, 248, 0.3); }
+
+        /* ==== Şebeke Frekansı Widget & Elektrik Dalgası Efektleri ==== */
+        @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.6); } 50% { box-shadow: 0 0 0 6px rgba(52,211,153,0); } }
+        .freq-live-dot { animation: pulse-dot 2s infinite; }
+
+        @keyframes freq-glow { 0%,100% { box-shadow: 0 0 20px rgba(56,189,248,0.15), 0 10px 25px -5px rgba(0,0,0,0.4); } 50% { box-shadow: 0 0 32px rgba(56,189,248,0.4), 0 10px 25px -5px rgba(0,0,0,0.4); } }
+        #freq-widget { animation: freq-glow 3.5s ease-in-out infinite; transition: all .3s ease; }
+        #freq-widget.freq-collapsed .freq-body { display: none; }
+
+        @keyframes wave-scroll-a { from { transform: translateX(0); } to { transform: translateX(-900px); } }
+        @keyframes wave-scroll-b { from { transform: translateX(0); } to { transform: translateX(-1100px); } }
+        .wave-track-a { animation: wave-scroll-a 9s linear infinite; }
+        .wave-track-b { animation: wave-scroll-b 13s linear infinite reverse; }
+
+        @keyframes spark-float {
+            0% { transform: translateY(0) scale(0.6); opacity: 0; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { transform: translateY(-140px) scale(0.2); opacity: 0; }
+        }
+        .spark { position: absolute; width: 3px; height: 3px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 8px 2px rgba(56,189,248,0.9); animation: spark-float 5s ease-in infinite; }
+
+        @keyframes flicker-line { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+        .section-divider-wave { animation: flicker-line 3s ease-in-out infinite; }
     </style>
 </head>
 <body class="antialiased selection:bg-sky-500 selection:text-white">
+
+    <!-- Sitenin Arkasında Sabit Kalan Hareketli Elektrik Dalgaları -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-slate-950">
+        <svg width="0" height="0" style="position:absolute">
+            <defs>
+                <linearGradient id="waveGradA" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.2"/>
+                    <stop offset="50%" stop-color="#7dd3fc" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.2"/>
+                </linearGradient>
+                <linearGradient id="waveGradB" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#818cf8" stop-opacity="0.2"/>
+                    <stop offset="50%" stop-color="#c4b5fd" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#818cf8" stop-opacity="0.2"/>
+                </linearGradient>
+                <filter id="waveGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                    <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+        </svg>
+        <div class="absolute inset-x-0 top-[10%] h-24 opacity-[0.28] flex">
+            <svg class="wave-track-a flex-shrink-0" width="900" height="110" viewBox="0 0 900 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C37.5,15 75,95 112.5,55 C150,15 187.5,95 225,55 C262.5,15 300,95 337.5,55 C375,15 412.5,95 450,55 C487.5,15 525,95 562.5,55 C600,15 637.5,95 675,55 C712.5,15 750,95 787.5,55 C825,15 862.5,95 900,55" stroke="url(#waveGradA)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+            <svg class="wave-track-a flex-shrink-0" width="900" height="110" viewBox="0 0 900 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C37.5,15 75,95 112.5,55 C150,15 187.5,95 225,55 C262.5,15 300,95 337.5,55 C375,15 412.5,95 450,55 C487.5,15 525,95 562.5,55 C600,15 637.5,95 675,55 C712.5,15 750,95 787.5,55 C825,15 862.5,95 900,55" stroke="url(#waveGradA)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+        </div>
+        <div class="absolute inset-x-0 top-[42%] h-24 opacity-[0.22] flex">
+            <svg class="wave-track-b flex-shrink-0" width="1100" height="110" viewBox="0 0 1100 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C45,90 90,20 135,55 C180,90 225,20 270,55 C315,90 360,20 405,55 C450,90 495,20 540,55 C585,90 630,20 675,55 C720,90 765,20 810,55 C855,90 900,20 945,55 C990,90 1035,20 1080,55 C1100,60 1100,55 1100,55" stroke="url(#waveGradB)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+            <svg class="wave-track-b flex-shrink-0" width="1100" height="110" viewBox="0 0 1100 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C45,90 90,20 135,55 C180,90 225,20 270,55 C315,90 360,20 405,55 C450,90 495,20 540,55 C585,90 630,20 675,55 C720,90 765,20 810,55 C855,90 900,20 945,55 C990,90 1035,20 1080,55 C1100,60 1100,55 1100,55" stroke="url(#waveGradB)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+        </div>
+        <div class="absolute inset-x-0 top-[74%] h-24 opacity-[0.18] flex">
+            <svg class="wave-track-a flex-shrink-0" width="900" height="110" viewBox="0 0 900 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C37.5,15 75,95 112.5,55 C150,15 187.5,95 225,55 C262.5,15 300,95 337.5,55 C375,15 412.5,95 450,55 C487.5,15 525,95 562.5,55 C600,15 637.5,95 675,55 C712.5,15 750,95 787.5,55 C825,15 862.5,95 900,55" stroke="url(#waveGradA)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+            <svg class="wave-track-a flex-shrink-0" width="900" height="110" viewBox="0 0 900 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C37.5,15 75,95 112.5,55 C150,15 187.5,95 225,55 C262.5,15 300,95 337.5,55 C375,15 412.5,95 450,55 C487.5,15 525,95 562.5,55 C600,15 637.5,95 675,55 C712.5,15 750,95 787.5,55 C825,15 862.5,95 900,55" stroke="url(#waveGradA)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+        </div>
+        <div class="absolute inset-x-0 top-[92%] h-24 opacity-[0.13] flex">
+            <svg class="wave-track-b flex-shrink-0" width="1100" height="110" viewBox="0 0 1100 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C45,90 90,20 135,55 C180,90 225,20 270,55 C315,90 360,20 405,55 C450,90 495,20 540,55 C585,90 630,20 675,55 C720,90 765,20 810,55 C855,90 900,20 945,55 C990,90 1035,20 1080,55 C1100,60 1100,55 1100,55" stroke="url(#waveGradB)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+            <svg class="wave-track-b flex-shrink-0" width="1100" height="110" viewBox="0 0 1100 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,55 C45,90 90,20 135,55 C180,90 225,20 270,55 C315,90 360,20 405,55 C450,90 495,20 540,55 C585,90 630,20 675,55 C720,90 765,20 810,55 C855,90 900,20 945,55 C990,90 1035,20 1080,55 C1100,60 1100,55 1100,55" stroke="url(#waveGradB)" stroke-width="2" fill="none" filter="url(#waveGlow)"/>
+            </svg>
+        </div>
+        <span class="spark" style="left:12%; animation-delay:0s;"></span>
+        <span class="spark" style="left:34%; animation-delay:1.8s;"></span>
+        <span class="spark" style="left:67%; animation-delay:0.9s;"></span>
+        <span class="spark" style="left:88%; animation-delay:2.7s;"></span>
+    </div>
 
     <!-- Navbar -->
     <nav class="fixed w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
@@ -71,6 +156,27 @@
             </div>
         </div>
     </nav>
+
+    <!-- Şebeke Frekansı Widget (Canlı Simülasyon) -->
+    <div id="freq-widget" class="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-40 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-xl shadow-xl px-3 py-2 w-28 sm:w-32 select-none">
+        <div class="flex items-center justify-between mb-1 cursor-pointer gap-1" onclick="toggleFreqWidget()">
+            <div class="flex items-center gap-1.5 min-w-0">
+                <span class="freq-live-dot w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0"></span>
+                <span class="text-[7px] font-bold uppercase tracking-wider text-slate-400 truncate lang-tr">Şebeke Hz</span>
+                <span class="text-[7px] font-bold uppercase tracking-wider text-slate-400 truncate lang-en hidden-lang">Grid Hz</span>
+            </div>
+            <i data-lucide="chevron-down" id="freq-toggle-icon" class="w-3 h-3 text-slate-500 flex-shrink-0 transition-transform"></i>
+        </div>
+        <div class="flex items-end justify-between">
+            <span id="freq-value" class="text-base font-black text-white tabular-nums">50.00</span>
+            <span class="text-[8px] font-bold text-slate-500 mb-0.5">Hz</span>
+        </div>
+        <div class="freq-body">
+            <canvas id="freq-canvas" width="140" height="24" class="w-full h-6 mt-1 rounded"></canvas>
+            <p class="text-[6px] text-slate-500 mt-1 leading-snug lang-tr">Simülasyon · TEİAŞ 49,8–50,2 Hz bandı</p>
+            <p class="text-[6px] text-slate-500 mt-1 leading-snug lang-en hidden-lang">Simulation · TEİAŞ's 49.8–50.2 Hz band</p>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section id="hakkimda" class="pt-32 pb-16 md:pt-40 md:pb-20 px-4 relative overflow-hidden">
@@ -139,7 +245,7 @@
     </section>
 
     <!-- Deneyimler -->
-    <section id="deneyimler" class="py-20 bg-slate-900 border-t border-slate-800">
+    <section id="deneyimler" class="py-20 bg-slate-900/85 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4">
             <h2 class="text-3xl font-bold mb-12 text-center text-white">
                 <span class="lang-tr">Profesyonel <span class="text-sky-500">Staj & Deneyimler</span></span>
@@ -148,17 +254,19 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- AKSA BESS -->
-                <div class="card-hover bg-slate-800 p-6 rounded-xl border border-slate-700 border-t-4 border-t-sky-500 relative overflow-hidden text-left flex flex-col">
+                <div onclick="openModal('modal-aksabess')" class="card-hover cursor-pointer bg-slate-800 p-6 rounded-xl border border-slate-700 border-t-4 border-t-sky-500 relative overflow-hidden text-left flex flex-col group">
                     <div class="absolute -right-4 -top-4 opacity-5 pointer-events-none text-sky-500"><i data-lucide="battery-medium" class="w-48 h-48"></i></div>
                     <div class="text-sky-400 text-xs font-bold mb-3 uppercase tracking-wider">
                         <span class="lang-tr">Temmuz - Ağustos 2026</span>
                         <span class="lang-en hidden-lang">July - August 2026</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-1 text-white">AKSA BESS</h3>
+                    <h3 class="text-xl font-bold mb-1 text-white group-hover:text-sky-400 transition-colors">AKSA BESS</h3>
                     <p class="text-slate-300 font-medium mb-4 lang-tr">Yeni Enerji Teknolojileri Stajyeri</p>
                     <p class="text-slate-300 font-medium mb-4 lang-en hidden-lang">New Energy Technologies Intern</p>
                     <p class="text-sm text-slate-400 leading-relaxed lang-tr flex-1">Batarya Enerji Depolama Sistemleri (BESS) biriminde tek hat şemalarının incelenmesi, CAPEX hesaplamaları ve şebeke optimizasyon süreçleri üzerine uygulamalı çalışmalar.</p>
                     <p class="text-sm text-slate-400 leading-relaxed lang-en hidden-lang flex-1">Practical studies on analyzing single-line diagrams, CAPEX calculations, and grid optimization processes within the Battery Energy Storage Systems (BESS) department.</p>
+                    <div class="text-sky-400 text-xs font-bold flex items-center mt-3 lang-tr"><i data-lucide="zoom-in" class="w-4 h-4 mr-1"></i> Detayları İncele</div>
+                    <div class="text-sky-400 text-xs font-bold flex items-center mt-3 lang-en hidden-lang"><i data-lucide="zoom-in" class="w-4 h-4 mr-1"></i> View Details</div>
                 </div>
 
                 <!-- GE VERNOVA -->
@@ -301,25 +409,57 @@
                     </div>
                 </div>
 
+                <!-- Akıllı Ev Sistemleri -->
+                <div onclick="openModal('modal-akilliev')" class="card-hover cursor-pointer bg-slate-800 rounded-xl border border-slate-700 flex flex-col relative group text-left">
+                    <div class="p-6 h-full flex flex-col">
+                        <div class="flex flex-wrap items-center gap-2 mb-4">
+                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs font-bold rounded">IoT / Otomasyon</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-white group-hover:text-yellow-400 transition-colors lang-tr">Akıllı Ev: Şebeke Rahatlatma Algoritması</h3>
+                        <h3 class="text-lg font-bold mb-3 text-white group-hover:text-yellow-400 transition-colors lang-en hidden-lang">Smart Home: Grid Relief Algorithm</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4 flex-1 lang-tr">Puant saatlerde yüksek tüketimli cihazların çalışmasını şebeke yoğunluğunun az olduğu saatlere kaydıran algoritma tasarımı.</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4 flex-1 lang-en hidden-lang">Algorithm design that shifts high-consumption device operation to hours with lower grid congestion.</p>
+                        <div class="text-yellow-400 text-xs font-bold flex items-center lang-tr"><i data-lucide="zoom-in" class="w-4 h-4 mr-1"></i> Detayları İncele</div>
+                        <div class="text-yellow-400 text-xs font-bold flex items-center lang-en hidden-lang"><i data-lucide="zoom-in" class="w-4 h-4 mr-1"></i> View Details</div>
+                    </div>
+                </div>
+
+                <!-- SIMARIS -->
+                <div onclick="openModal('modal-simaris')" class="card-hover cursor-pointer bg-slate-800 rounded-xl border border-slate-700 flex flex-col relative group text-left">
+                    <div class="p-6 h-full flex flex-col">
+                        <div class="flex flex-wrap items-center gap-2 mb-4">
+                            <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-bold rounded">Siemens SIMARIS</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-white group-hover:text-indigo-400 transition-colors lang-tr">Alçak Gerilim Güç Dağıtım Projesi</h3>
+                        <h3 class="text-lg font-bold mb-3 text-white group-hover:text-indigo-400 transition-colors lang-en hidden-lang">Low Voltage Power Distribution Project</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4 flex-1 lang-tr">SIMARIS Design ile IEC standartlarına uygun şalt cihazı seçimi, kablo kesit tayini ve kısa devre akım hesaplamalarının yapıldığı global yarışma projesi.</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4 flex-1 lang-en hidden-lang">A global competition project on IEC-compliant switchgear selection, cable sizing, and short-circuit calculations using SIMARIS Design.</p>
+                        <div class="text-indigo-400 text-xs font-bold flex items-center lang-tr"><i data-lucide="zoom-in" class="w-4 h-4 mr-1"></i> Detayları İncele</div>
+                        <div class="text-indigo-400 text-xs font-bold flex items-center lang-en hidden-lang"><i data-lucide="zoom-in" class="w-4 h-4 mr-1"></i> View Details</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
     <!-- YAYINLARIM / RAPOR ÖZETLERİ -->
-    <section id="yayinlarim" class="py-20 bg-slate-900 border-b border-slate-800">
+    <section id="yayinlarim" class="py-20 bg-slate-900/85 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4">
             <h2 class="text-3xl font-bold mb-4 text-center text-white">
                 <span class="lang-tr">Yayınlarım & <span class="text-sky-500">Sektörel Analizler</span></span>
                 <span class="lang-en hidden-lang">Publications & <span class="text-sky-500">Sectoral Analyses</span></span>
             </h2>
-            
-            <div class="flex justify-center mt-10">
-                <div class="bg-slate-800 rounded-2xl border border-slate-700 p-10 max-w-2xl text-center">
-                    <i data-lucide="lock" class="w-12 h-12 text-slate-500 mx-auto mb-4"></i>
-                    <h3 class="text-xl font-bold text-white mb-3 lang-tr">Çok Yakında!</h3>
-                    <h3 class="text-xl font-bold text-white mb-3 lang-en hidden-lang">Coming Soon!</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed lang-tr">Okuduğum raporlardan (EDİDER, TEİAŞ, IEA vb.) kendimce çıkardığım özetleri ve sektörel notları kısa süre içinde bu alanda paylaşmaya çalışacağım.</p>
-                    <p class="text-slate-400 text-sm leading-relaxed lang-en hidden-lang">I will try to share the summaries and sectoral notes I have personally extracted from the reports I read (EDIDER, TEIAS, IEA, etc.) in this area very soon.</p>
+            <p class="text-center text-slate-400 mb-10 max-w-2xl mx-auto lang-tr">Sektörden okuduğum raporları kendi bakış açımla özetlediğim bölüm.</p>
+            <p class="text-center text-slate-400 mb-10 max-w-2xl mx-auto lang-en hidden-lang">Where I summarize sector reports I've read, in my own words.</p>
+
+            <div class="flex justify-center mt-2">
+                <div class="bg-slate-800/60 rounded-2xl border border-slate-700 p-8 max-w-2xl text-center">
+                    <i data-lucide="lock" class="w-10 h-10 text-slate-500 mx-auto mb-3"></i>
+                    <h3 class="text-lg font-bold text-white mb-2 lang-tr">Daha Fazlası Yolda</h3>
+                    <h3 class="text-lg font-bold text-white mb-2 lang-en hidden-lang">More on the Way</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed lang-tr">Okuduğum raporlardan (<a href="https://edider.org.tr/" target="_blank" class="text-sky-400 hover:underline font-semibold">EDİDER</a>, TEİAŞ, IEA vb.) kendimce çıkardığım özetleri ve sektörel notları kısa süre içinde bu alanda paylaşmaya devam edeceğim.</p>
+                    <p class="text-slate-400 text-sm leading-relaxed lang-en hidden-lang">I'll keep sharing summaries and sectoral notes I personally extract from the reports I read (<a href="https://edider.org.tr/" target="_blank" class="text-sky-400 hover:underline font-semibold">EDİDER</a>, TEİAŞ, IEA, etc.) in this section.</p>
                 </div>
             </div>
         </div>
@@ -402,15 +542,16 @@
                             </div>
                         </div>
 
-                        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center gap-4">
+                        <a href="https://edider.org.tr/" target="_blank" class="block group bg-slate-800 p-5 rounded-xl border border-slate-700 hover:border-emerald-500 transition-all flex items-center gap-4">
                             <div class="w-10 text-center"><i data-lucide="leaf" class="w-8 h-8 text-emerald-500"></i></div>
-                            <div>
-                                <h4 class="font-bold text-white lang-tr">EDİDER 3. Yeşil Enerji Zirvesi</h4>
-                                <h4 class="font-bold text-white lang-en hidden-lang">EDİDER 3rd Green Energy Summit</h4>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-white group-hover:text-emerald-400 transition-colors lang-tr">EDİDER 3. Yeşil Enerji Zirvesi</h4>
+                                <h4 class="font-bold text-white group-hover:text-emerald-400 transition-colors lang-en hidden-lang">EDİDER 3rd Green Energy Summit</h4>
                                 <p class="text-xs text-slate-400 mt-1 font-semibold lang-tr">Kasım 2025 | Katılımcı</p>
                                 <p class="text-xs text-slate-400 mt-1 font-semibold lang-en hidden-lang">Nov 2025 | Participant</p>
                             </div>
-                        </div>
+                            <i data-lucide="external-link" class="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors"></i>
+                        </a>
 
                         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center gap-4">
                             <div class="w-10 text-center"><i data-lucide="battery-medium" class="w-8 h-8 text-sky-500"></i></div>
@@ -456,7 +597,7 @@
     </section>
 
     <!-- Sivil Toplum ve Liderlik -->
-    <section class="py-20 bg-slate-900 border-b border-slate-800">
+    <section class="py-20 bg-slate-900/85 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4">
             <h2 class="text-3xl font-bold mb-12 text-center text-white">
                 <span class="lang-tr">Sivil Toplum & <span class="text-sky-500">Liderlik</span></span>
@@ -571,7 +712,7 @@
     </section>
 
     <!-- İletişim / Footer -->
-    <section id="iletisim" class="pt-24 pb-16 bg-slate-900 text-center relative flex flex-col">
+    <section id="iletisim" class="pt-24 pb-16 bg-slate-900/85 text-center relative flex flex-col">
         <div class="max-w-3xl mx-auto px-4 flex-1 relative z-10">
             <h2 class="text-3xl font-bold mb-6 text-white">
                 <span class="lang-tr">Benimle İletişime Geçin</span>
@@ -814,6 +955,49 @@ print(f"Günlük Arbitraj Karı: {net_kar} TL")</code></pre>
             </div>
         </div>
     </div>
+    <!-- AKSA BESS Staj Detay Modalı -->
+    <div id="modal-aksabess" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 transition-all">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-4xl rounded-2xl shadow-2xl modal-content flex flex-col overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
+                <h3 class="text-xl font-bold text-white flex items-center">
+                    <i data-lucide="battery-medium" class="w-6 h-6 mr-3 text-sky-400"></i>
+                    <span class="lang-tr">AKSA BESS Stajı: Yaptığım Çalışmalar</span>
+                    <span class="lang-en hidden-lang">AKSA BESS Internship: My Work</span>
+                </h3>
+                <button type="button" onclick="closeModal('modal-aksabess')" class="text-slate-400 hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <div class="p-8 space-y-6 text-slate-300 text-left">
+                <!-- CAPEX Otomasyonu -->
+                <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                    <h4 class="text-sky-400 font-bold mb-2 flex items-center"><i data-lucide="calculator" class="w-4 h-4 mr-2"></i> <span class="lang-tr">CAPEX Otomasyonu</span><span class="lang-en hidden-lang">CAPEX Automation</span></h4>
+                    <p class="text-sm text-slate-400 leading-relaxed lang-tr">BESS projelerinin yatırım maliyeti (CAPEX) hesaplamalarını manuel Excel tekrarından çıkarıp, ekipman (batarya modülü, PCS/inverter, trafo, konteyner, saha işleri) ve güç/kapasite (MW/MWh) parametrelerine göre otomatik güncellenen bir hesaplama şablonu üzerinde çalıştım. Amaç, farklı proje senaryolarında (kurulu güç, depolama süresi, saha koşulları) maliyet kalemlerinin hızlıca kıyaslanabilmesiydi.</p>
+                    <p class="text-sm text-slate-400 leading-relaxed lang-en hidden-lang">I worked on taking BESS project CAPEX calculations out of manual, repetitive spreadsheet work and into a template that auto-updates based on equipment (battery modules, PCS/inverter, transformer, container, site works) and power/capacity (MW/MWh) parameters — so different project scenarios (installed power, storage duration, site conditions) could be compared quickly.</p>
+                    <!-- ILGIN: Buraya varsa somut CAPEX otomasyon detaylarını (kullandığın araç: Excel/VBA/Python, kısalttığın süre, örnek proje ölçeği vb.) ekleyebilirsin. -->
+                </div>
+
+                <!-- XLPE Kablo Hesapları -->
+                <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                    <h4 class="text-sky-400 font-bold mb-2 flex items-center"><i data-lucide="cable" class="w-4 h-4 mr-2"></i> <span class="lang-tr">XLPE Kablo Kesit Hesapları</span><span class="lang-en hidden-lang">XLPE Cable Sizing Calculations</span></h4>
+                    <p class="text-sm text-slate-400 leading-relaxed lang-tr">Orta gerilim XLPE (çapraz bağlı polietilen izoleli) güç kablolarının kesit seçiminde akım taşıma kapasitesi, gerilim düşümü ve kısa devre termik dayanımı kriterlerine göre hesaplamalar yaptım; BESS konteynerlerinden trafo merkezine kadar olan kablo güzergâhlarının boyutlandırılmasına katkı sağladım.</p>
+                    <p class="text-sm text-slate-400 leading-relaxed lang-en hidden-lang">I performed sizing calculations for medium-voltage XLPE (cross-linked polyethylene insulated) power cables based on current-carrying capacity, voltage drop, and short-circuit thermal withstand criteria; contributed to sizing cable routes from the BESS containers to the substation.</p>
+                    <!-- ILGIN: Buraya varsa örnek kesit değerleri, gerilim seviyesi (örn. 34.5 kV) veya kullandığın standart (IEC 60502 vb.) eklenebilir. -->
+                </div>
+
+                <!-- AutoCAD Çizimleri -->
+                <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                    <h4 class="text-sky-400 font-bold mb-2 flex items-center"><i data-lucide="pen-tool" class="w-4 h-4 mr-2"></i> <span class="lang-tr">AutoCAD Çizimleri</span><span class="lang-en hidden-lang">AutoCAD Drawings</span></h4>
+                    <p class="text-sm text-slate-400 leading-relaxed lang-tr">AutoCAD üzerinde BESS sahasına ait tek hat şemaları ve kablo güzergâh/yerleşim çizimlerinin hazırlanmasında ve güncellenmesinde yer aldım; saha yerleşim planlaması ile elektriksel tasarımın tutarlı ilerlemesini sağladım.</p>
+                    <p class="text-sm text-slate-400 leading-relaxed lang-en hidden-lang">I took part in preparing and updating single-line diagrams and cable routing/layout drawings for the BESS site in AutoCAD, helping keep site layout planning aligned with the electrical design.</p>
+                </div>
+
+                <div class="bg-slate-800/50 w-full h-40 rounded-xl flex items-center justify-center border border-slate-700 relative">
+                    <span class="text-slate-400 font-medium flex items-center text-sm lang-tr"><i data-lucide="image" class="w-5 h-5 mr-2"></i>AutoCAD Çizim Görseli Buraya Eklenecek</span>
+                    <span class="text-slate-400 font-medium flex items-center text-sm lang-en hidden-lang"><i data-lucide="image" class="w-5 h-5 mr-2"></i>AutoCAD Drawing Image Here</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Akıllı Ev Modalı -->
     <div id="modal-akilliev" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 transition-all">
@@ -1029,6 +1213,82 @@ print(f"Günlük Arbitraj Karı: {net_kar} TL")</code></pre>
                 document.body.style.overflow = 'auto';
             }
         }
+
+        // ==== Şebeke Frekansı Widget: Küçült/Büyüt ====
+        function toggleFreqWidget() {
+            const widget = document.getElementById('freq-widget');
+            const icon = document.getElementById('freq-toggle-icon');
+            widget.classList.toggle('freq-collapsed');
+            if (icon) icon.style.transform = widget.classList.contains('freq-collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
+        }
+
+        // ==== Şebeke Frekansı Simülasyonu ====
+        // Not: TEİAŞ'ın canlı frekans verisine tarayıcıdan doğrudan (CORS/kimlik doğrulamasız)
+        // erişilebilen açık bir API bulunmuyor. Bu widget, Elektrik Şebeke Yönetmeliği'nde
+        // tanımlanan 49,8-50,2 Hz işletme bandını referans alan, ortalamaya-dönen (mean-reverting)
+        // gerçekçi bir simülasyondur. Gerçek zamanlı bir veri kaynağınız varsa (EPİAŞ Şeffaflık,
+        // özel bir SCADA beslemesi vb.) stepFrequency() içindeki rastgele üretimi o kaynaktan
+        // gelen değerle değiştirmeniz yeterli.
+        (function () {
+            const freqEl = document.getElementById('freq-value');
+            const canvas = document.getElementById('freq-canvas');
+            const dot = document.querySelector('#freq-widget .freq-live-dot');
+            if (!freqEl || !canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            let freq = 50.00;
+            const history = new Array(50).fill(50.00);
+            let t = 0;
+
+            function stepFrequency() {
+                const pull = (50.00 - freq) * 0.10;
+                const noise = (Math.random() - 0.5) * 0.035;
+                freq += pull + noise;
+                freq = Math.max(49.90, Math.min(50.10, freq));
+
+                history.push(freq);
+                if (history.length > 50) history.shift();
+
+                freqEl.textContent = freq.toFixed(3);
+                const dev = Math.abs(freq - 50);
+                if (dev > 0.045) {
+                    freqEl.className = 'text-base font-black text-amber-400 tabular-nums';
+                    if (dot) dot.className = 'freq-live-dot w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0';
+                } else {
+                    freqEl.className = 'text-base font-black text-white tabular-nums';
+                    if (dot) dot.className = 'freq-live-dot w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0';
+                }
+            }
+
+            function drawWave() {
+                t += 1;
+                const w = canvas.width, h = canvas.height;
+                ctx.clearRect(0, 0, w, h);
+                ctx.beginPath();
+                const step = w / (history.length - 1);
+                history.forEach((v, i) => {
+                    const jitter = Math.sin(t * 0.06 + i * 0.7) * 0.8;
+                    const y = h / 2 - (v - 50) * 90 + jitter;
+                    const x = i * step;
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                });
+                const grad = ctx.createLinearGradient(0, 0, w, 0);
+                grad.addColorStop(0, 'rgba(56,189,248,0.05)');
+                grad.addColorStop(1, 'rgba(56,189,248,0.95)');
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 1.8;
+                ctx.stroke();
+            }
+
+            function loop() {
+                drawWave();
+                requestAnimationFrame(loop);
+            }
+
+            stepFrequency();
+            setInterval(stepFrequency, 1000);
+            loop();
+        })();
     </script>
 </body>
 </html>
